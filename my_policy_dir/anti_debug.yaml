@@ -1,0 +1,20 @@
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: "anti-debug"
+spec:
+  kprobes:
+    - call: "sys_ptrace"
+      message: "disable ptrace"
+      syscall: true
+      args:
+        - index: 0
+          type: "int"
+      selectors:
+        - matchArgs:
+            - index: 0
+              operator: "Equal"
+              values:
+                - 0
+          matchActions:
+            - action: Sigkill
