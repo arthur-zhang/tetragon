@@ -71,8 +71,8 @@ func (ctx *testContext) runProg(selfPid uint32) (uint32, error) {
 	return res, nil
 }
 
-// initKernelStatedata initializes the kernel state data with the given PIDs.
-func (ctx *testContext) initKernelStatedata(pids []uint32) error {
+// initKernelStateData initializes the kernel state data with the given PIDs.
+func (ctx *testContext) initKernelStateData(pids []uint32) error {
 	k := &selectors.KernelSelectorState{}
 	err := selectors.ParseMatchPid(k, &v1alpha1.PIDSelector{
 		Operator:       "In",
@@ -137,7 +137,7 @@ func Test_PidMatch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			require.NoError(t, ctx.initKernelStatedata(tt.pids))
+			require.NoError(t, ctx.initKernelStateData(tt.pids))
 			result, err := ctx.runProg(tt.testPid)
 			require.NoError(t, err)
 			assert.Equal(t, tt.expected, result)
