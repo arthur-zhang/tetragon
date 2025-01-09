@@ -1,0 +1,20 @@
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: "shm-exec"
+spec:
+  kprobes:
+  - call: "sys_execve"
+    syscall: true
+    selectors:
+    - matchBinaries:
+      # - operator: "Prefix"
+      #   values:
+      #   - "/dev/shm"
+      #   - "/run/shm/"
+      - operator: "In"
+        values:
+        - "/dev/shm/my_sleep"
+        - "/run/shm/"
+      matchActions:
+      - action: Sigkill
