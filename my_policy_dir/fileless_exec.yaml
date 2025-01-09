@@ -1,7 +1,7 @@
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:
-  name: "memfd-exec"
+  name: "fileless-exec"
 spec:
   kprobes:
   - call: "sys_execve"
@@ -10,17 +10,24 @@ spec:
     - index: 0
       type: "string"
     selectors:
-    - matchPIDs:
-      - operator: NotIn
-        followForks: false
-        isNamespacePID: false
-        values:
-        - 0
-        - 1
-      matchArgs:
+    - matchArgs:
       - index: 0
         operator: "Prefix"
         values:
         - "/proc/self/fd/"
+      matchActions:
+      - action: Sigkill
+    - matchArgs:
+      - index: 0
+        operator: "Prefix"
+        values:
+        - "/dev/shm/"
+      matchActions:
+      - action: Sigkill
+    - matchArgs:
+      - index: 0
+        operator: "Prefix"
+        values:
+        - "/run/shm/"
       matchActions:
       - action: Sigkill
