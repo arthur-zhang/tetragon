@@ -1,0 +1,33 @@
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: "fileless-exec"
+spec:
+  kprobes:
+  - call: "sys_execve"
+    syscall: true
+    args:
+    - index: 0
+      type: "string"
+    selectors:
+    - matchArgs:
+      - index: 0
+        operator: "Prefix"
+        values:
+        - "/proc/self/fd/"
+      matchActions:
+      - action: Sigkill
+    - matchArgs:
+      - index: 0
+        operator: "Prefix"
+        values:
+        - "/dev/shm/"
+      matchActions:
+      - action: Sigkill
+    - matchArgs:
+      - index: 0
+        operator: "Prefix"
+        values:
+        - "/run/shm/"
+      matchActions:
+      - action: Sigkill

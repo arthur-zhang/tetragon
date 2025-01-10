@@ -1,0 +1,32 @@
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: "clear-log-activity"
+spec:
+  kprobes:
+  - call: "sys_openat"
+    syscall: true
+    args:
+    - index: 0
+      type: int
+    - index: 1
+      type: "string"
+    - index: 2
+      type: int
+    selectors:
+
+    - matchArgs:
+      - index: 1
+        operator: "Prefix"
+        values:
+        - "/var/log/"
+      matchBinaries:
+      - operator: "NotIn"
+        values:
+        - "/usr/sbin/sshd"
+        - "/usr/lib/accountsservice/accounts-daemon"
+        - "/usr/lib/pcp/bin/pmproxy"
+        - "/usr/bin/kylin-os-manager-monitor"
+
+      matchActions:
+      - action: Post

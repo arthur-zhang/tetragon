@@ -32,3 +32,4 @@ cscope.in.out
 
 # macOS artifacts
 .DS_Store
+bpf/cmake-build-debug
