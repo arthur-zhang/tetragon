@@ -14,12 +14,16 @@ spec:
     - index: 2
       type: int
     selectors:
-
     - matchArgs:
       - index: 1
         operator: "Prefix"
         values:
         - "/var/log/"
+      - index: 2
+        operator: "Mask"
+        values:
+        # O_TRUNC
+        - 0x200 
       matchBinaries:
       - operator: "NotIn"
         values:
@@ -27,6 +31,6 @@ spec:
         - "/usr/lib/accountsservice/accounts-daemon"
         - "/usr/lib/pcp/bin/pmproxy"
         - "/usr/bin/kylin-os-manager-monitor"
-
+      
       matchActions:
       - action: Post
