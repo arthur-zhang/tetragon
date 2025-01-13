@@ -1,0 +1,44 @@
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: "reverse-shell"
+spec:
+  # lists:
+  # - name: "sys_dup_x"
+  #   type: "syscalls"
+  #   values:
+  #   - "sys_dup2"
+  #   - "sys_dup3"
+  kprobes:
+  - call: "sys_dup3"
+    syscall: true
+    args:
+    - index: 0
+      type: fd
+    - index: 1
+      type: "int"
+    selectors:
+    - matchActions:
+      - action: Post
+  - call: "sys_close"
+    syscall: true
+    args:
+    - index: 0
+      type: "int"
+    selectors:
+    - matchActions:
+      - action: UnfollowFD
+        argFd: 0
+        argName: 0
+  - call: "fd_install"
+    syscall: false
+    args:
+    - index: 0
+      type: int
+    - index: 1
+      type: "file"
+    selectors:
+    - matchActions:
+      - action: FollowFD
+        argFd: 0
+        argName: 1
